@@ -29,7 +29,8 @@ def SmenosW(S,W):
 	return Result
 
 def M(G,v,colores):
-	S=[] 
+	S=[]
+	Colors=[]
 	for i in range(len(G)):
 		if i!=v:
 			S.append(i)
@@ -81,7 +82,9 @@ def M(G,v,colores):
 				S.append(i)
 			
 		Zs=Zs[1:]
-	return L
+	for l in L:
+		Colors.append(G[v][l[0]])
+	return L,Colors
 
 def gv(G,N): #Construye un subgrafo de G que contiene solamente los nodos en N
 	Graph =[]
