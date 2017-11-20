@@ -140,7 +140,8 @@ def CalculaF(Sink,Partition):#m y P en el programa ptf. Devuelve una lista con l
 def ptf(G,v,c):
 	Nodes=[]
 	Edges=[]
-	P=M(G,v,c)	
+	PC=M(G,v,c)	
+	P=PC[0]
 	N=[]
 	N.append(v)
 	for i in P:
@@ -151,11 +152,21 @@ def ptf(G,v,c):
 	Nodes.append('t')
 	u ='t'
 	Type=''
+	color=0
 	while gnb!=[]:
 		Nodes.append('w')
 		Edges.append([u,'w'])
 		m=sink(gnb)		
-		if m !=[]:
+		if m !=[]
+			#Asigna color
+			ca=False
+			j=0
+			while not ca and j<len(P):
+				if m[0] in P[j]:
+					color=PC[1][j]
+					ca=True
+				else:
+					j+=1
 			F=CalculaF(m,P)
 			for i in gnb:	
 				if m[0] in i:
@@ -170,7 +181,7 @@ def ptf(G,v,c):
 			for i in F:	
 				ptf_i = ptf(gv(G,i),0,c)	
 					
-				if Type == ptf_i[0]== 'complete': # and both have the same color?
+				if Type == ptf_i[0]== 'complete' and color==ptf_i[3]: # and both have the same color?
 					for k in ptf_i[1][1:]:
 						if 't' not in str(k) and 'w' not in str(k):
 							Nodes.append(i[k])
@@ -218,7 +229,7 @@ def ptf(G,v,c):
 			u='w'
 	Nodes.append(v)
 	Edges.appende(['w',v])
-	return (Type,Nodes,Edges)
+	return (Type,Nodes,Edges,color)
 
 def DrawPtf(Nodes,Edges):
 	G = net.Graph()
