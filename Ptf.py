@@ -29,7 +29,8 @@ def SmenosW(S,W):
 	return Result
 
 def M(G,v,colores):
-	S=[] 
+	S=[]
+	Colors=[]
 	for i in range(len(G)):
 		if i!=v:
 			S.append(i)
@@ -81,7 +82,9 @@ def M(G,v,colores):
 				S.append(i)
 			
 		Zs=Zs[1:]
-	return L
+	for l in L:
+		Colors.append(G[v][l[0]])
+	return L,Colors
 
 def gv(G,N): #Construye un subgrafo de G que contiene solamente los nodos en N
 	Graph =[]
@@ -137,25 +140,33 @@ def CalculaF(Sink,Partition):#m y P en el programa ptf. Devuelve una lista con l
 def ptf(G,v,c):
 	Nodes=[]
 	Edges=[]
-	P=M(G,v,c)	
+	PC=M(G,v,c)	
+	P=PC[0]
 	N=[]
+	N.append(v)
 	for i in P:
-		if len(i)>0:
-			N.append(i[0])
+		N.append(i[0])
 	N.sort()
 	g=gv(G,N)#g'
 	gnb=Gv(g,v,N)#devuelve G''
 	Nodes.append('t')
-	Nodes.append('w')
-	Edges.append(['t','w'])
-	Nodes.append(v)
-	Edges.append(['w',v])
 	u ='t'
 	Type=''
-	print Nodes,Edges
+	color=0
 	while gnb!=[]:
+		Nodes.append('w')
+		Edges.append([u,'w'])
 		m=sink(gnb)		
-		if m !=[]:
+		if m !=[]
+			#Asigna color
+			ca=False
+			j=0
+			while not ca and j<len(P):
+				if m[0] in P[j]:
+					color=PC[1][j]
+					ca=True
+				else:
+					j+=1
 			F=CalculaF(m,P)
 			for i in gnb:	
 				if m[0] in i:
@@ -167,40 +178,39 @@ def ptf(G,v,c):
 				Type='primitive'							
 			else:
 				Type='complete'
-			print 'Type', Type
 			for i in F:	
-				print i
-				print gv(G,i)
-				print i[0],c	
 				ptf_i = ptf(gv(G,i),0,c)	
 					
-				if Type == ptf_i[0]== 'complete': # and both have the same color?
+				if Type == ptf_i[0]== 'complete' and color==ptf_i[3]: # and both have the same color?
 					for k in ptf_i[1][1:]:
 						if 't' not in str(k) and 'w' not in str(k):
 							Nodes.append(i[k])
 						else:
-							Nodes.append(k)
+							Nodes.append(k+str(i[0]))
 												
 					for k in ptf_i[2][1:]:		
-						NodeInEdge_ptf=[]
+						NodesInEdge_ptf=[]
 						for j in k:						
 							if 't' not in str(j) and 'w' not in str(j):
-								NodeInEdge_ptf.append(i[j])
-							else:
-								NodeInEdge_ptf.append(j)								
-						Edges.append(NodeInEdge_ptf)
+								NodesInEdge_ptf.append(i[j])
+							elif 'w' in str(j):
+								NodesInEdge_ptf.append(j+str(i[0]))								
+						if len(NodesInEdge)==2:
+							Edges.append(NodesInEdge_ptf)
+						if 'w' in str(NodesInEdge_ptf[0]):
+							Edges.append([u,NodesInEdge_ptf[0]])
             
-					if ptf_i[2][1][0]!='t' and ptf_i[2][1][0]!='w':
+					if 't' not in str(ptf_i[2][1][0]) and 'w' not in str(ptf_i[2][1][0]):
 						Edges.append([u,i[ptf_i[2][1][0]]])
-					else:
-						Edges.append([u,ptf_i[2][1][0]])
+					elif 'w' in str(ptf_i[2][1][0]):
+						Edges.append([u,ptf_i[2][1][0]+str(i[0])])
 						
 				else:
 					for k in ptf_i[1]:
 						if 't' not in str(k) and 'w' not in str(k):
 							Nodes.append(i[k])
 						else:
-							Nodes.append(k+str(i[0]))#+str(i))
+							Nodes.append(k+str(i[0]))
 							
 					for k in ptf_i[2]:		
 						NodeInEdge_ptf=[]
@@ -217,8 +227,9 @@ def ptf(G,v,c):
 						Edges.append([u,ptf_i[2][0][0]+str(i[0])])#+str(i))
 								
 			u='w'
-	
-	return (Type,Nodes,Edges)
+	Nodes.append(v)
+	Edges.appende(['w',v])
+	return (Type,Nodes,Edges,color)
 
 def DrawPtf(Nodes,Edges):
 	G = net.Graph()
