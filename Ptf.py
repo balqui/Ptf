@@ -61,8 +61,12 @@ def M(G,v,colores):
 			l=[]
 			P.append(l)
 	
-		for i in S:			
-			P[G[Zs[0][0]][i]].append(i)
+		for i in S:	
+			colors=G[Zs[0][0]][i]
+			for j in range(1,len(Zs[0])):
+				if G[Zs[0][j]][i]!=colors:
+					colors=G[Zs[0][j]][i]
+			P[colors].append(i)
 				
 		for W in P:
 			if W != []:
@@ -70,7 +74,6 @@ def M(G,v,colores):
 					L.append(W)
 				ZW=[]
 				ZW.append(SmenosW(S,W))
-				ZW.append(Zs[0][1:])
 				
 				for i in ZW:
 					if i not in Zs and i !=[]:
@@ -106,7 +109,7 @@ def Gv(G,n,N): #Grafo dirigido sin bucles,
 				if G[j][i]!= ColorToN and G[j][i]!=0:
 					flag =True
 					for k in GResult:
-						if i in k:
+						if N[i] in k:
 							flag=False
 					if flag:
 						l.append(N[i])
@@ -157,7 +160,7 @@ def ptf(G,v,c):
 		Nodes.append('w')
 		Edges.append([u,'w'])
 		m=sink(gnb)		
-		if m !=[]
+		if m !=[]:
 			#Asigna color
 			ca=False
 			j=0
@@ -168,9 +171,10 @@ def ptf(G,v,c):
 				else:
 					j+=1
 			F=CalculaF(m,P)
+			m0=m[0]			
 			for i in gnb:	
-				if m[0] in i:
-					i.remove(m[0])
+				if m0 in i:
+					i.remove(m0)
 				if i ==[]:
 					gnb.remove(i)
 			
@@ -185,7 +189,7 @@ def ptf(G,v,c):
 					for k in ptf_i[1][1:]:
 						if 't' not in str(k) and 'w' not in str(k):
 							Nodes.append(i[k])
-						else:
+						elif 'w' in str(k):
 							Nodes.append(k+str(i[0]))
 												
 					for k in ptf_i[2][1:]:		
@@ -235,11 +239,16 @@ def DrawPtf(Nodes,Edges):
 	G = net.Graph()
 	G.add_nodes_from(Nodes)
 	G.add_edges_from(Edges)
-	net.draw_spectral(G,node_color='k')
-	#net.draw_circular(G,node_color='k')
+	#net.draw_spectral(G,node_color='b', with_labels=net.spring_layout(G))
+	net.draw_circular(G,node_color='b', with_labels=net.spring_layout(G))
 	plt.show()
+
 	
-#G1=[[0,1,1,2,2],[1,0,1,2,2],[1,1,0,2,2],[2,2,2,0,2],[2,2,2,2,0]]	
+#G=[[0,1,2,1,1,1,1],[1,0,3,1,1,1,1],[2,3,0,1,1,1,1],[1,1,1,0,2,2,2],[1,1,1,2,0,1,3],[1,1,1,2,1,0,2],[1,1,1,2,3,2,0]]
+#G1=[[0,1,1,2,1,1],[1,0,3,2,3,3],[1,3,0,2,3,3],[2,2,2,0,2,2],[1,3,3,2,0,3],[1,3,3,2,3,0]]
+#G2=[[0,1,1,2,3,2],[1,0,1,2,3,2],[1,1,0,2,3,2],[2,2,2,0,3,1],[3,3,3,3,0,2],[ 2,2,2,1,2,0]]
+#G3=[[0,1,1,2,2],[1,0,1,2,2],[1,1,0,2,2],[2,2,2,0,2],[2,2,2,2,0]]
+
 #primetreefam= ptf(G1,0,2)
 #print "Nodos:", primetreefam[1]
 #print "Aristas:", primetreefam[2]
